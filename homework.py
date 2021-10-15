@@ -41,9 +41,9 @@ HOMEWORK_STATUSES = {
 
 def send_message(bot, message):
     """Отправляем сообщение пользователю."""
-    bot.send_message(chat_id=CHAT_ID, text=message)
+    bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
     message_info = (
-        f'Сообщение: "{message}" доставлено пользователю {CHAT_ID}'
+        f'Сообщение: "{message}" доставлено пользователю {TELEGRAM_CHAT_ID}'
     )
     logging.info(message_info)
 
