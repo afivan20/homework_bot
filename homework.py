@@ -98,8 +98,18 @@ def check_response(response):
     return status
 
 
+def check_tokens():
+    """Проверка наличия токенов."""
+    if PRACTICUM_TOKEN is None:
+        logging.critical(
+            'Отсутствует обязательная переменная окружения:'
+            ' "PRACTICUM_TOKEN" Программа принудительно остановлена.')
+        exit()
+
+
 def main():
     """Запускаем телеграм-бот для проверки статуса ДЗ."""
+    check_tokens()
     telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
     while True:
