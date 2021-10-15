@@ -77,7 +77,7 @@ def parse_status(homework):
         message = (f'Такого статуса не существует. Ошибка {error}')
         logging.error(message)
         send_message(BOT, message)
-    homework_name = homework["lesson_name"]
+    homework_name = homework['homework_name']
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     message = f'Изменился статус проверки работы "{homework_name}". {verdict}'
     send_message(bot, message)
