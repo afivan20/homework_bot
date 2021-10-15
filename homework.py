@@ -12,7 +12,7 @@ load_dotenv()
 
 PRACTICUM_TOKEN = os.getenv('YANDEX_TOKEN')
 TELEGRAM_TOKEN = os.getenv('BOT_TOKEN')
-CHAT_ID = os.getenv('ID')
+TELEGRAM_CHAT_ID = os.getenv('ID')
 try:
     BOT = telegram.Bot(token=TELEGRAM_TOKEN)
 except Exception as critical:
