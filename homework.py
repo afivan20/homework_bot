@@ -78,9 +78,8 @@ def parse_status(homework):
         logging.error(message)
         send_message(BOT, message)
     homework_name = homework['homework_name']
-    bot = telegram.Bot(token=TELEGRAM_TOKEN)
     message = f'Изменился статус проверки работы "{homework_name}". {verdict}'
-    send_message(bot, message)
+    send_message(BOT, message)
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
@@ -109,7 +108,6 @@ def check_tokens():
 
 def main():
     """Запускаем телеграм-бот для проверки статуса ДЗ."""
-    telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
     check_tokens()
     while True:
