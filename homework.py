@@ -104,11 +104,6 @@ def check_response(response):
 
 def main():
     """Запускаем телеграм-бот для проверки статуса ДЗ."""
-    if (TELEGRAM_TOKEN is None) or (CHAT_ID) is None:
-        logging.critical(
-            'Отсутствуют обязательные переменная окружения:'
-            ' "PRACTICUM_TOKEN" Программа принудительно остановлена.')
-
     current_timestamp = int(time.time())
     while True:
         try:
