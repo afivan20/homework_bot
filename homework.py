@@ -27,7 +27,6 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     level=logging.INFO,
     filename='homework.log',
-    #handlers=handler,
 )
 
 RETRY_TIME = 300
