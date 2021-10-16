@@ -109,7 +109,6 @@ def check_tokens():
 def main():
     """Запускаем телеграм-бот для проверки статуса ДЗ."""
     current_timestamp = int(time.time())
-    check_tokens()
     while True:
         try:
             get_api_answer(ENDPOINT, current_timestamp - RETRY_TIME * 2)
