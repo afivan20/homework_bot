@@ -12,7 +12,7 @@ load_dotenv()
 
 PRACTICUM_TOKEN = os.getenv('YANDEX_TOKEN')
 TELEGRAM_TOKEN = os.getenv('BOT_TOKEN')
-TELEGRAM_CHAT_ID = os.getenv('ID')
+CHAT_ID = os.getenv('ID')
 try:
     BOT = telegram.Bot(token=TELEGRAM_TOKEN)
 except Exception as critical:
@@ -27,6 +27,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     level=logging.INFO,
     filename='homework.log',
+    #handlers=handler,
 )
 
 RETRY_TIME = 300
@@ -41,9 +42,9 @@ HOMEWORK_STATUSES = {
 
 def send_message(bot, message):
     """Отправляем сообщение пользователю."""
-    bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
+    bot.send_message(chat_id=CHAT_ID, text=message)
     message_info = (
-        f'Сообщение: "{message}" доставлено пользователю {TELEGRAM_CHAT_ID}'
+        f'Сообщение: "{message}" доставлено пользователю {CHAT_ID}'
     )
     logging.info(message_info)
 
@@ -77,9 +78,11 @@ def parse_status(homework):
         message = (f'Такого статуса не существует. Ошибка {error}')
         logging.error(message)
         send_message(BOT, message)
-    homework_name = homework['homework_name']
+    homework_name = homework["homework_name"]
+    print(f'Изменился статус проверки работы "{homework_name}". {verdict}')
+    bot = telegram.Bot(token=TELEGRAM_TOKEN)
     message = f'Изменился статус проверки работы "{homework_name}". {verdict}'
-    send_message(BOT, message)
+    send_message(bot, message)
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
@@ -92,19 +95,9 @@ def check_response(response):
     except Exception as error:
         message = (f'Статус домашнего задания не найден! {error}')
         logging.error(message)
-        bot = telegram.Bot(token=TELEGRAM_TOKEN)
-        send_message(bot, message)
+        send_message(BOT, message)
     parse_status(homework)
     return status
-
-
-def check_tokens():
-    """Проверка наличия токенов."""
-    if PRACTICUM_TOKEN is None:
-        logging.critical(
-            'Отсутствует обязательная переменная окружения:'
-            ' "PRACTICUM_TOKEN" Программа принудительно остановлена.')
-        exit()
 
 
 def main():
