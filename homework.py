@@ -13,21 +13,21 @@ load_dotenv()
 PRACTICUM_TOKEN = os.getenv('YANDEX_TOKEN')
 TELEGRAM_TOKEN = os.getenv('BOT_TOKEN')
 CHAT_ID = os.getenv('ID')
-try:
-    BOT = telegram.Bot(token=TELEGRAM_TOKEN)
-except Exception as critical:
-    logging.critical(
-        f'Отсутствие обязательных переменных окружения'
-        f'во время запуска бота. {critical}'
-    )
-logger = logging.getLogger(__name__)
-handler = StreamHandler(sys.stdout)
-logger.addHandler(handler)
 logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     level=logging.INFO,
     filename='homework.log',
 )
+logger = logging.getLogger(__name__)
+handler = StreamHandler(sys.stdout)
+logger.addHandler(handler)
+try:
+    BOT = telegram.Bot(token=TELEGRAM_TOKEN)
+except Exception as critical:
+    logging.critical(
+        f'Отсутствие обязательных переменных окружения '
+        f'во время запуска бота. {critical}'
+    )
 
 RETRY_TIME = 300
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
@@ -79,9 +79,12 @@ def parse_status(homework):
         send_message(BOT, message)
     homework_name = homework["homework_name"]
     print(f'Изменился статус проверки работы "{homework_name}". {verdict}')
-    bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    try:
+        bot = telegram.Bot(token=TELEGRAM_TOKEN)
+        send_message(bot, message)
+    except Exception:
+        logging.critical('AAAA')
     message = f'Изменился статус проверки работы "{homework_name}". {verdict}'
-    send_message(bot, message)
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
@@ -101,7 +104,11 @@ def check_response(response):
 
 def main():
     """Запускаем телеграм-бот для проверки статуса ДЗ."""
-    telegram.Bot(token=TELEGRAM_TOKEN)
+    if (TELEGRAM_TOKEN is None) or (CHAT_ID) is None:
+        logging.critical(
+            'Отсутствуют обязательные переменная окружения:'
+            ' "PRACTICUM_TOKEN" Программа принудительно остановлена.')
+
     current_timestamp = int(time.time())
     while True:
         try:
