@@ -14,7 +14,7 @@ PRACTICUM_TOKEN = os.getenv('YANDEX_TOKEN')
 TELEGRAM_TOKEN = os.getenv('BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('ID')
 try:
-    BOT = telegram.Bot(token=TELEGRAM_TOKEN)
+    bot = telegram.Bot(token=TELEGRAM_TOKEN)
 except Exception as critical:
     logging.critical(
         f'Отсутствие обязательных переменных окружения'
@@ -58,7 +58,7 @@ def get_api_answer(url, current_timestamp):
             f'Эндпоинт {ENDPOINT} недоступен. '
             f'Код ответа API: {response.status_code}'
         )
-        send_message(BOT, message)
+        send_message(bot, message)
         raise logging.error(
             message)
     response = requests.get(url, headers=headers, params=payload).json()
@@ -76,10 +76,10 @@ def parse_status(homework):
     except Exception as error:
         message = (f'Такого статуса не существует. Ошибка {error}')
         logging.error(message)
-        send_message(BOT, message)
+        send_message(bot, message)
     homework_name = homework['homework_name']
     message = f'Изменился статус проверки работы "{homework_name}". {verdict}'
-    send_message(BOT, message)
+    send_message(bot, message)
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
@@ -92,7 +92,7 @@ def check_response(response):
     except Exception as error:
         message = (f'Статус домашнего задания не найден! {error}')
         logging.error(message)
-        send_message(BOT, message)
+        send_message(bot, message)
     parse_status(homework)
     return status
 
@@ -117,7 +117,7 @@ def main():
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             logging.error(message)
-            send_message(BOT, message)
+            send_message(bot, message)
             time.sleep(RETRY_TIME)
             continue
 
