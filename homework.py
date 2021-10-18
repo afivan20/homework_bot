@@ -30,7 +30,7 @@ except Exception as critical:
         f'во время запуска бота. {critical}'
     )
 
-RETRY_TIME = 300
+RETRY_TIME = 30
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 
 HOMEWORK_STATUSES = {
@@ -104,7 +104,7 @@ def main():
     current_timestamp = int(time.time())
     while True:
         try:
-            get_api_answer(ENDPOINT, current_timestamp - RETRY_TIME * 2)
+            get_api_answer(ENDPOINT, 0)
             time.sleep(RETRY_TIME)
         except Exception:
             time.sleep(RETRY_TIME)
