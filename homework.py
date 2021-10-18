@@ -18,12 +18,12 @@ PRACTICUM_ENDPOINT = (
     'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 )
 PRACTICUM_HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
-RETRY_TIME = 300
 HOMEWORK_STATUSES = {
     'approved': 'Работа проверена: ревьюеру всё понравилось. Ура!',
     'reviewing': 'Работа взята на проверку ревьюером.',
     'rejected': 'Работа проверена, в ней нашлись ошибки.'
 }
+RETRY_TIME = 300
 
 logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
