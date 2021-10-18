@@ -12,7 +12,8 @@ load_dotenv()
 
 PRACTICUM_TOKEN = os.getenv('YANDEX_TOKEN')
 TELEGRAM_TOKEN = os.getenv('BOT_TOKEN')
-CHAT_ID = os.getenv('ID')
+TELEGRAM_CHAT_ID = os.getenv('ID')
+HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
 logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     level=logging.INFO,
@@ -41,18 +42,25 @@ HOMEWORK_STATUSES = {
 
 def send_message(bot, message):
     """Отправляем сообщение пользователю."""
-    bot.send_message(chat_id=CHAT_ID, text=message)
+    try:
+        bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
+    except Exception as error:
+        logging.error(
+            f'Невозможно отправить сообщение пользователю, ошибка - {error}'
+        )
     message_info = (
-        f'Сообщение: "{message}" доставлено пользователю {CHAT_ID}'
+        f'Сообщение: "{message}" доставлено пользователю {TELEGRAM_CHAT_ID}'
     )
     logging.info(message_info)
 
 
 def get_api_answer(url, current_timestamp):
     """Отправляем запрос к API домашки на эндпоинт."""
-    headers = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
     payload = {'from_date': current_timestamp}
-    response = requests.get(url, headers=headers, params=payload)
+    try:
+        response = requests.get(url, headers=HEADERS, params=payload)
+    except Exception as error:
+        logging.error(f'Невозможно получит ответ от сервера, ошибка - {error}')
     if response.status_code != 200:
         message = (
             f'Эндпоинт {ENDPOINT} недоступен. '
@@ -61,11 +69,7 @@ def get_api_answer(url, current_timestamp):
         send_message(BOT, message)
         raise logging.error(
             message)
-    response = requests.get(url, headers=headers, params=payload).json()
-    try:
-        check_response(response)
-    except Exception:
-        pass
+    response = response.json()
     return response
 
 
@@ -73,18 +77,11 @@ def parse_status(homework):
     """Проанализируем статус домашки и найдем вердикт ревьюера."""
     try:
         verdict = HOMEWORK_STATUSES[homework['status']]
-    except Exception as error:
+    except KeyError as error:
         message = (f'Такого статуса не существует. Ошибка {error}')
         logging.error(message)
         send_message(BOT, message)
     homework_name = homework["homework_name"]
-    print(f'Изменился статус проверки работы "{homework_name}". {verdict}')
-    try:
-        bot = telegram.Bot(token=TELEGRAM_TOKEN)
-        send_message(bot, message)
-    except Exception:
-        logging.critical('AAAA')
-    message = f'Изменился статус проверки работы "{homework_name}". {verdict}'
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
@@ -93,7 +90,7 @@ def check_response(response):
     homeworks = response.get('homeworks')
     homework = homeworks[0]
     try:
-        status = homeworks[0].get('status')
+        status = homework.get('status')
     except Exception as error:
         message = (f'Статус домашнего задания не найден! {error}')
         logging.error(message)
@@ -109,10 +106,7 @@ def main():
         try:
             get_api_answer(ENDPOINT, current_timestamp - RETRY_TIME * 2)
             time.sleep(RETRY_TIME)
-        except Exception as error:
-            message = f'Сбой в работе программы: {error}'
-            logging.error(message)
-            send_message(BOT, message)
+        except Exception:
             time.sleep(RETRY_TIME)
             continue
 
