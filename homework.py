@@ -43,6 +43,12 @@ except Exception as critical:
     )
 
 
+class UnexpectedResponse(Exception):
+    """Не приходит ожидаемый ответ 200."""
+
+    pass
+
+
 def get_api_answer(url, current_timestamp):
     """Отправляем запрос к API домашки на эндпоинт."""
     payload = {'from_date': current_timestamp}
