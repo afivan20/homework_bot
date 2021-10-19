@@ -113,7 +113,7 @@ def main():
             )
             check_response(get_api_answer(
                 PRACTICUM_ENDPOINT,
-                0
+                current_timestamp - RETRY_TIME * 2
             ))
 
             time.sleep(RETRY_TIME)
