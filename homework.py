@@ -44,8 +44,11 @@ except Exception as critical:
 
 
 class UnexpectedResponse(Exception):
-    """Не приходит ожидаемый ответ 200."""
+    """Логгирование при статусе ответа отличном от 200."""
 
+    logging.error(
+        f'Эндпоинт {PRACTICUM_ENDPOINT} недоступен. '
+    )
     pass
 
 
@@ -87,13 +90,12 @@ def parse_status(homework):
     except KeyError as error:
         message = (f'Такого статуса не существует. Ошибка {error}')
         logging.error(message)
-        send_message(BOT, message)
+        # send_message(BOT, message) #NameError: name 'BOT' is not defined
     homework_name = homework['homework_name']
     if verdict:
         message = (
             f'Изменился статус проверки работы "{homework_name}". {verdict}'
         )
-        send_message(BOT, message)
     return message
 
 
@@ -110,16 +112,17 @@ def send_message(bot, message):
 def main():
     """Запускаем телеграм-бот для проверки статуса ДЗ."""
     current_timestamp = int(time.time())
+    from_date = (current_timestamp - RETRY_TIME * 2)
     while True:
         try:
             get_api_answer(
                 PRACTICUM_ENDPOINT,
-                current_timestamp - RETRY_TIME * 2
+                from_date
             )
-            check_response(get_api_answer(
+            send_message(BOT, parse_status(check_response(get_api_answer(
                 PRACTICUM_ENDPOINT,
-                current_timestamp - RETRY_TIME * 2
-            ))
+                from_date
+            ))))
 
             time.sleep(RETRY_TIME)
         except Exception:
