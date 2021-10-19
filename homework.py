@@ -70,6 +70,7 @@ def check_response(response):
     homeworks = response.get('homeworks')
     homework = homeworks[0]
     status = homework.get('status')
+    print(status)
     parse_status(homework)
     return status
 
@@ -83,6 +84,10 @@ def parse_status(homework):
         logging.error(message)
         send_message(BOT, message)
     homework_name = homework['homework_name']
+    send_message(
+        BOT,
+        f'Изменился статус проверки работы "{homework_name}". {verdict}'
+    )
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
@@ -102,7 +107,8 @@ def main():
     while True:
         try:
             get_api_answer(
-                PRACTICUM_ENDPOINT, current_timestamp - RETRY_TIME * 2
+                PRACTICUM_ENDPOINT,
+                current_timestamp - RETRY_TIME * 2
             )
             time.sleep(RETRY_TIME)
         except Exception:
