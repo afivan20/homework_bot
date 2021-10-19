@@ -57,8 +57,7 @@ def get_api_answer(url, current_timestamp):
             f'Код ответа API: {response.status_code}'
         )
         send_message(BOT, message)
-        raise logging.error(
-            message)
+        raise UnexpectedResponse(message)
     try:
         return response.json()
     except JSONDecodeError as err:
