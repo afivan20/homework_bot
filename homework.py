@@ -84,10 +84,6 @@ def parse_status(homework):
         logging.error(message)
         send_message(BOT, message)
     homework_name = homework['homework_name']
-    send_message(
-        BOT,
-        f'Изменился статус проверки работы "{homework_name}". {verdict}'
-    )
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
