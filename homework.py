@@ -50,6 +50,7 @@ def get_api_answer(url, current_timestamp):
         response = requests.get(url, headers=PRACTICUM_HEADERS, params=payload)
     except requests.exceptions.RequestException as error:
         logging.error(f'Невозможно получит ответ от сервера, ошибка - {error}')
+        return {}
     if response.status_code != 200:
         message = (
             f'Эндпоинт {PRACTICUM_ENDPOINT} недоступен. '
@@ -70,7 +71,6 @@ def check_response(response):
     homeworks = response.get('homeworks')
     homework = homeworks[0]
     status = homework.get('status')
-    print(status)
     parse_status(homework)
     return status
 
@@ -84,7 +84,9 @@ def parse_status(homework):
         logging.error(message)
         send_message(BOT, message)
     homework_name = homework['homework_name']
-    return f'Изменился статус проверки работы "{homework_name}". {verdict}'
+    message = f'Изменился статус проверки работы "{homework_name}". {verdict}'
+    send_message(BOT, message)
+    return message
 
 
 def send_message(bot, message):
@@ -106,6 +108,11 @@ def main():
                 PRACTICUM_ENDPOINT,
                 current_timestamp - RETRY_TIME * 2
             )
+            check_response(get_api_answer(
+                PRACTICUM_ENDPOINT,
+                current_timestamp - RETRY_TIME * 2
+            ))
+
             time.sleep(RETRY_TIME)
         except Exception:
             time.sleep(RETRY_TIME)
