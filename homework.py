@@ -9,6 +9,7 @@ import sys
 from json import JSONDecodeError
 
 
+
 load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv('BOT_TOKEN')
@@ -83,16 +84,10 @@ def check_response(response):
 
 def parse_status(homework):
     """Проанализируем статус домашки и найдем вердикт ревьюера."""
-    try:
-        verdict = HOMEWORK_STATUSES[homework['status']]
-    except KeyError as error:
-        message = (f'Такого статуса не существует. Ошибка {error}')
-        logging.error(message)
-        return send_message(BOT, message)
-    homework_name = homework['homework_name']
-    if verdict:
-        message = (
-            f'Изменился статус проверки работы "{homework_name}". {verdict}'
+    homework_name = homework['lesson_name']
+    comment = homework['reviewer_comment']
+    message = (
+            f'Изменился статус проверки работы "{homework_name}". {comment}'
         )
     return send_message(BOT, message)
 
@@ -101,6 +96,7 @@ def send_message(bot, message):
     """Отправляем сообщение пользователю."""
     try:
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
+        logging.info(message)
     except Exception as error:
         logging.error(
             f'Невозможно отправить сообщение пользователю, ошибка - {error}'
