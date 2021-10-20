@@ -117,8 +117,6 @@ def main():
                 from_date
             )
             send_message(BOT, parse_status(check_response(api)))
-            
-
             time.sleep(RETRY_TIME)
         except Exception:
             time.sleep(RETRY_TIME)
