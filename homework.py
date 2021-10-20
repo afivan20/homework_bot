@@ -78,9 +78,7 @@ def check_response(response):
     """Проверим есть ли появился ли статус ДЗ."""
     homeworks = response.get('homeworks')
     homework = homeworks[0]
-    status = homework.get('status')
-    parse_status(homework)
-    return status
+    return parse_status(homework)
 
 
 def parse_status(homework):
@@ -90,7 +88,7 @@ def parse_status(homework):
     except KeyError as error:
         message = (f'Такого статуса не существует. Ошибка {error}')
         logging.error(message)
-        # send_message(BOT, message) #NameError: name 'BOT' is not defined
+        send_message(BOT, message) #NameError: name 'BOT' is not defined
     homework_name = homework['homework_name']
     if verdict:
         message = (
@@ -115,14 +113,12 @@ def main():
     from_date = (current_timestamp - RETRY_TIME * 2)
     while True:
         try:
-            get_api_answer(
+            api = get_api_answer(
                 PRACTICUM_ENDPOINT,
                 from_date
             )
-            send_message(BOT, parse_status(check_response(get_api_answer(
-                PRACTICUM_ENDPOINT,
-                from_date
-            ))))
+            send_message(BOT, parse_status(check_response(api)))
+            
 
             time.sleep(RETRY_TIME)
         except Exception:
