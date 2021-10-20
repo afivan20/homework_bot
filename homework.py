@@ -88,12 +88,13 @@ def parse_status(homework):
     except KeyError as error:
         message = (f'Такого статуса не существует. Ошибка {error}')
         logging.error(message)
+        return send_message(BOT, message)
     homework_name = homework['homework_name']
     if verdict:
         message = (
             f'Изменился статус проверки работы "{homework_name}". {verdict}'
         )
-    return message
+    return send_message(BOT, message)
 
 
 def send_message(bot, message):
@@ -116,7 +117,7 @@ def main():
                 PRACTICUM_ENDPOINT,
                 from_date
             )
-            send_message(BOT, parse_status(check_response(api)))
+            check_response(api)
             time.sleep(RETRY_TIME)
         except Exception:
             time.sleep(RETRY_TIME)
