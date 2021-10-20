@@ -88,7 +88,6 @@ def parse_status(homework):
     except KeyError as error:
         message = (f'Такого статуса не существует. Ошибка {error}')
         logging.error(message)
-        send_message(BOT, message) #NameError: name 'BOT' is not defined
     homework_name = homework['homework_name']
     if verdict:
         message = (
